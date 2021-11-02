@@ -268,7 +268,7 @@ def compare():
 
     today = datetime.now().strftime("%d-%m-%Y_%Hh-%Mmin-%Ss")
 
-    folder_result = "{}/resutl_{}".format(lbl1["text"], today)
+    folder_result = "{}/resultat_{}".format(lbl1["text"], today)
 
     if os.path.exists(folder_result):
         shutil.rmtree(f'{folder_result}')
@@ -370,6 +370,22 @@ def browse_button():
     lbl1["text"] = filename
 
 
+def CheckButton1():
+    if VarCheckButton_1.get():
+        sheet_name_1['state'] = "normal"
+    else:
+        sheet_name_1['state'] = "disabled"
+        sheet_name_1['disabledbackground'] = '#9F9D99'
+
+
+def CheckButton2():
+    if VarCheckButton_2.get():
+        sheet_name_2['state'] = "normal"
+    else:
+        sheet_name_2['state'] = "disabled"
+        sheet_name_2['disabledbackground'] = '#9F9D99'
+
+
 ############################################################################################
 # --------------------------------------  Frontend  -------------------------------------- #
 ############################################################################################
@@ -381,9 +397,9 @@ root = tk.Tk()
 # personnaliser la fenetre
 root.title("    PyApp Station Data Desktop")  # nom d'entête de la fenetre
 root.iconbitmap("TotalEnergies.ico")  # icone de la fenetre
-root.geometry("900x600+15+15")  # taille de la fenetre
-root.minsize(900, 600)
-root.maxsize(1000, 700)
+root.geometry("1080x600+15+15")  # taille de la fenetre
+root.minsize(1000, 620)
+root.maxsize(1120, 800)
 
 # configuration du font de la fenetre (couleur ou autre)
 # root.config(background='#CCCCCC')
@@ -392,7 +408,8 @@ root.maxsize(1000, 700)
 mainMenu = tk.Menu(root)
 
 file_menu = tk.Menu(root, tearoff=0)
-file_menu.add_command(label="A propos")
+file_menu.add_command(label="Parcourir le fichier 1", command=File_dialog_1)
+file_menu.add_command(label="Parcourir le fichier 2", command=File_dialog_2)
 file_menu.add_command(label="Quit", command=root.quit)
 
 mainMenu.add_cascade(label="File", menu=file_menu)
@@ -400,30 +417,42 @@ mainMenu.add_cascade(label="File", menu=file_menu)
 
 # ---------- la boîte de dialogue d'ouverture de fichier ---------- #
 file_frame_1 = tk.LabelFrame(
-    root, text="Open First File", background='#CCCCCC')
-file_frame_1.place(height=200, width=400, rely=0.05, relx=0.02)
+    root, text="Ouvrir le premier fichier", background='#CCCCCC')
+file_frame_1.place(height=200, width=500, rely=0.05, relx=0.01)
 
 # label
-label_1 = tk.Label(
-    file_frame_1, text='If the file is an Excel file enter the name of the sheet (optional)')
-label_1.place(rely=0.45, relx=0)
+fram_label_1 = tk.Frame(file_frame_1, background='#CCCCCC')
+
+VarCheckButton_1 = tk.BooleanVar()
+VarCheckButton_1.set(False)
+CheckButton_1 = tk.Checkbutton(
+    fram_label_1, var=VarCheckButton_1, command=CheckButton1, background='#CCCCCC')
+CheckButton_1.grid(row=0, column=0)
+
+label_1 = tk.Label(fram_label_1, background='#CCCCCC',
+                   text="Cochez et indiquez le nom de la feuille d'Excel par défaut premier feuille (facultatif)")
+label_1.grid(row=0, column=1)
 
 var_entry_1 = tk.StringVar()
-sheet_name_1 = tk.Entry(file_frame_1, textvariable=var_entry_1)
-sheet_name_1.place(rely=0.65, relx=0.10)
+sheet_name_1 = tk.Entry(file_frame_1, textvariable=var_entry_1, bd=2,
+                        background="white", state="disabled", disabledbackground='#9F9D99')
+sheet_name_1['state'] = "disabled"
+sheet_name_1.place(rely=0.63, relx=0.10)
+
+fram_label_1.place(rely=0.45, relx=0)
 
 # Buttons
-button1 = tk.Button(file_frame_1, text="Browse A File",
+button1 = tk.Button(file_frame_1, text="Parcourir",
                     command=lambda: File_dialog_1())
-button1.place(rely=0.85, relx=0.50)
+button1.place(rely=0.83, relx=0.50)
 
-button2 = tk.Button(file_frame_1, text="Load File",
+button2 = tk.Button(file_frame_1, text="Charger",
                     command=lambda: view_data())
-button2.place(rely=0.85, relx=0.30)
+button2.place(rely=0.83, relx=0.30)
 
 # Le texte du fichier/chemin d'accès au fichier
-label_file_1 = ttk.Label(file_frame_1, text="No File Selected")
-label_file_1.place(rely=0, relx=0)
+label_file_1 = ttk.Label(file_frame_1, text="Aucun fichier sélectionné")
+label_file_1.place(rely=0.02, relx=0)
 
 box1 = tk.Listbox(root)
 box1.place(height=200, width=200, rely=0.43, relx=0.05)
@@ -446,38 +475,52 @@ treescrolly.pack(side="right", fill="y")
 # col_name_1 = tk.Label(root, textvariable=var_col_name_1,
 #                       background="#BFF3EC", width=22)
 col_name_1 = tk.Label(root, text="",
-                      background="#74BBE4", width=22)
-col_name_1.place(rely=0.53, relx=0.28)
+                      background="#F1F2F6", width=22)
+col_name_1.place(rely=0.53, relx=0.24)
 
 btn_1 = tk.Button(root, text='Ok', command=selected_item_1)
-btn_1.place(rely=0.63, relx=0.30)
+btn_1.place(rely=0.63, relx=0.28)
 
-# ---------- la boîte de dialogue d'ouverture de fichier ---------- #
+
+######## ---------- la boîte de dialogue d'ouverture de fichier ---------- #########
+
+
 file_frame_2 = tk.LabelFrame(
-    root, text="Open Second File", background='#CCCCCC')
-file_frame_2.place(height=200, width=400, rely=0.05, relx=0.50)
+    root, text="Ouvrir le deuxième fichier", background='#CCCCCC')
+file_frame_2.place(height=200, width=500, rely=0.05, relx=0.51)
 
 # label
-label_2 = tk.Label(
-    file_frame_2, text='If the file is an Excel file enter the name of the sheet (optional)')
-label_2.place(rely=0.45, relx=0)
+fram_label_2 = tk.Frame(file_frame_2, background='#CCCCCC')
+
+VarCheckButton_2 = tk.BooleanVar()
+VarCheckButton_2.set(False)
+CheckButton_2 = tk.Checkbutton(
+    fram_label_2, var=VarCheckButton_2, command=CheckButton2, background='#CCCCCC')
+CheckButton_2.grid(row=0, column=0)
+
+label_2 = tk.Label(fram_label_2, background='#CCCCCC',
+                   text="Cochez et indiquez le nom de la feuille d'Excel par défaut premier feuille (facultatif)")
+label_2.grid(row=0, column=1)
 
 var_entry_2 = tk.StringVar()
-sheet_name_2 = tk.Entry(file_frame_2, textvariable=var_entry_2)
-sheet_name_2.place(rely=0.65, relx=0.10)
+sheet_name_2 = tk.Entry(file_frame_2, textvariable=var_entry_2, bd=2,
+                        background="white", state="disabled", disabledbackground='#9F9D99')
+sheet_name_2.place(rely=0.63, relx=0.10)
+
+fram_label_2.place(rely=0.45, relx=0)
 
 # Buttons
-button3 = tk.Button(file_frame_2, text="Browse A File",
+button3 = tk.Button(file_frame_2, text="Parcourir",
                     command=lambda: File_dialog_2())
-button3.place(rely=0.85, relx=0.50)
+button3.place(rely=0.83, relx=0.50)
 
-button4 = tk.Button(file_frame_2, text="Load File",
+button4 = tk.Button(file_frame_2, text="Charger",
                     command=lambda: view_data_2())
-button4.place(rely=0.85, relx=0.30)
+button4.place(rely=0.83, relx=0.30)
 
 # Le texte du fichier/chemin d'accès au fichier
-label_file_2 = ttk.Label(file_frame_2, text="No File Selected")
-label_file_2.place(rely=0, relx=0)
+label_file_2 = ttk.Label(file_frame_2, text="Aucun fichier sélectionné")
+label_file_2.place(rely=0.02, relx=0)
 
 
 box2 = tk.Listbox(root)
@@ -501,19 +544,22 @@ treescrollw.pack(side="right", fill="y")
 # col_name_2 = tk.Label(root, textvariable=var_col_name_2,
 #   background="#BFF3EC", width=22)
 col_name_2 = tk.Label(root, text="",
-                      background="#74BBE4", width=22)
-col_name_2.place(rely=0.53, relx=0.76)
+                      background="#F1F2F6", width=22)
+col_name_2.place(rely=0.53, relx=0.72)
 
 btn_2 = tk.Button(root, text='Ok', command=selected_item_2)
-btn_2.place(rely=0.63, relx=0.80)
+btn_2.place(rely=0.63, relx=0.76)
+
+
+# ---------------------------------------------------------------- #
 
 
 button_comparer = tk.Button(
-    root, text="Compare", width=20, background="#004C8C", fg="white", command=compare)
+    root, text="Comparer", width=20, background="#004C8C", fg="white", command=compare)
 button_comparer.place(rely=0.90, relx=0.30)
 
 button_quit = tk.Button(
-    root, text="Quit", width=20, background="#C60030", fg="white", command=root.quit)
+    root, text="Quiter", width=20, background="#C60030", fg="white", command=root.quit)
 button_quit.place(rely=0.90, relx=0.50)
 
 
@@ -523,7 +569,7 @@ fram = tk.Frame(root, bd=1)
 lbl1 = tk.Label(fram, text="")
 lbl1.grid(row=0, column=0)
 button_folder = tk.Button(
-    fram, text="destination folder", command=browse_button)
+    fram, text="Sélectionner un dossier de destination", command=browse_button)
 button_folder.grid(row=1, column=0)
 
 fram.place(rely=0.80, relx=0.25)
